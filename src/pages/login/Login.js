@@ -36,7 +36,7 @@ export default function Login({ setIsLogin }) {
       };
       axios
         .post(
-          "https://fruitseasonms-001-site1.ctempurl.com/api/auths/login",
+          "http://fruitseasonapims-001-site1.btempurl.com/api/auths/login",
           dataLogin,
           {
             headers: {
@@ -46,18 +46,8 @@ export default function Login({ setIsLogin }) {
         )
         .then((response) => {
           // Xử lý phản hồi từ API
-          // console.log(response.data.Account);
-          // localStorage.setItem("access_token", response.data.AccessToken);
-          // localStorage.setItem("refresh_token", response.data.RefreshToken);
-          // localStorage.setItem("isLogin", true);
-          // setIsLogin(true);
-          // toast.success("Login successful");
-          // navigate("/dashboard");
-          console.log(response);
-          localStorage.setItem("user", JSON.stringify(response));
-          setIsLogin(true);
-          const requestedPage = localStorage.getItem("requestedPage") || "/";
-          navigate(requestedPage);
+          localStorage.setItem("user", JSON.stringify(response.data.data));
+          navigate('/dashboard')
         })
         .catch((error) => {
           setIsLoading(false);
