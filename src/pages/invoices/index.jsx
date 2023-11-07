@@ -1,83 +1,71 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataInvoices } from "../../data/mockData";
-import Header from "../../components/Header";
+import React, { useEffect } from 'react';
+import { Card, CardContent, Typography, CardMedia, Button } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllWeather, createAllWeather } from '../../redux/apiThunk/ExpertThunk/weatherThunk';
+import { useState } from 'react';
 
-const Invoices = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const columns = [
-    { field: "id", headerName: "ID" },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
-        </Typography>
-      ),
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      flex: 1,
-    },
-  ];
+const WeatherCard = () => {
+  const dispatch = useDispatch();
+  const weatherData = useSelector((state) => state.weather?.weather?.data);
+  console.log("Data", weatherData?.weather?.data);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [reload, setReload] = useState(true);
+  useEffect(() => {
+    dispatch(getAllWeather({ location: '', createdDate: '' }));
+  }, [dispatch, reload]);
+  if ( !weatherData|| !Array.isArray(weatherData)) {
+    return <div>Loading...</div>; 
+  }
+  const  handleCreateNewWeather = async () => {
+    await dispatch(createAllWeather({userId: user?.userId}))
+    setReload(!reload);
+  };
+  console.log("user", user.userId);
+  const cardStyle = {
+    maxWidth: 400,
+    margin: '0 auto',
+    marginTop: 20,
+  };
+
+  const mediaStyle = {
+    height: 200,
+  };
 
   return (
-    <Box m="20px">
-      <Header title="INVOICES" subtitle="List of Invoice Balances" />
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-        }}
-      >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
-      </Box>
-    </Box>
+    <div>
+      <Button variant="contained" color="primary" onClick={handleCreateNewWeather}>
+        Create New Weather
+      </Button>
+      {weatherData.map((data) => (
+        <Card key={data.weatherId} style={cardStyle}>
+          <CardMedia
+            style={mediaStyle}
+            component="img"
+            alt={data.weatherName}
+            height="140"
+            image={data.image}
+          />
+          <CardContent>
+            <Typography variant="h5" component="div">
+              {data.weatherName}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Location: {data.location}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Description: {data.description}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Status: {data.status}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Created Date: {new Date(data.createdDate).toLocaleString()}
+            </Typography>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };
 
-export default Invoices;
+export default WeatherCard;

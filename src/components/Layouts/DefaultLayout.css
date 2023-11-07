@@ -13,8 +13,10 @@
     flex-direction: column;
     justify-content: space-between;
     margin-bottom: 100px;
+    height: 100%;
 }
 
-.nav {
+/* .nav {
     background-color: #edf2f7;
-}
+    
+} */

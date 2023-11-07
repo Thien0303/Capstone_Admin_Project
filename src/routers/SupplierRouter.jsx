@@ -3,9 +3,9 @@ import React from 'react'
 // import PropTypes from 'prop-types'
 import { Navigate, Outlet } from 'react-router'
 
-const PrivateRouters = () => {
+const SupplierRouter = (role) => {
     let isAuthenticated = JSON.parse(localStorage.getItem("user"));
-    return isAuthenticated ? <Outlet /> : <Navigate to="/error" />;
+    return isAuthenticated?.roleName === 'Supplier' ? <Outlet /> : <Navigate to="/error" />;
 }
 
-export default PrivateRouters
+export default SupplierRouter

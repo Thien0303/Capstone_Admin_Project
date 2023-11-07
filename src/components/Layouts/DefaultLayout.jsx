@@ -8,10 +8,7 @@ const DefaultLayout = ({ children }) => {
         <div>
             <Topbar />
             <div className="body">
-                <div className="nav">
                     <Sidebar />
-                </div>
-
                 <div className="component">{children}</div>
             </div>
         </div>
